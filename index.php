@@ -52,6 +52,7 @@ $weather['temperaturaMaxima'] = $weather['temperaturaMaxima'] . '°';
 $weather['temperaturaMinima'] = $weather['temperaturaMinima'] . '°';
 $weather['sensacionTermica'] = $weather['sensacionTermica'] . '°';
 $weather['humedad'] = $weather['humedad'] . '%';
+$weather['puntoRocio'] = $weather['puntoRocio'] . '°';
 $weather['velocidadViento'] = $weather['velocidadViento'] . ' km/h';
 $weather['precipitacionDia'] = $weather['precipitacionDia'] . ' mm';
 $weather['precipitacionSemana'] = $weather['precipitacionSemana'] . ' mm';
