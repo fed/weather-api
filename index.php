@@ -103,7 +103,7 @@ $data = array(
     ),
     "direction" => array(
       "label" => "Dirección del viento",
-      "value" => $local_station_data["direccionViento"],
+      "value" => ucfirst(strtolower($local_station_data["direccionViento"])),
       "unit" => null
     )
   ),
@@ -132,7 +132,7 @@ $data = array(
   "icon" => array(
     "id" => $owm_data["weather"][0]["id"],
     "main" => $owm_data["weather"][0]["main"],
-    "description" => $owm_data["weather"][0]["description"],
+    "description" => ucfirst($owm_data["weather"][0]["description"]),
     "filename" => $owm_data["weather"][0]["icon"],
     "url" => "//" . $_SERVER["SERVER_NAME"] . "/icons/" . $owm_data["weather"][0]["icon"] . ".svg"
   )
