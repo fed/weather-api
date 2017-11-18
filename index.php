@@ -3,7 +3,7 @@
 // ----------------------------------------------------
 // CORS: Allow requests from all origins
 // ----------------------------------------------------
-header("Content-type: application/json");
+header("Content-type: application/json; charset=utf-8");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST");
 header("Access-Control-Allow-Headers: X-Requested-With");
@@ -148,7 +148,7 @@ $data = array(
         "unit" => null
       )
     ),
-    "cummulativeRain" => array(
+    "cumulativeRainfall" => array(
       "day" => array(
         "label" => "Precipitación acumulada hoy",
         "value" => floatval($local_station_data["precipitacionDia"]),
