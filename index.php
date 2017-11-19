@@ -45,6 +45,7 @@ $local_station_data = array_values($local_station_data_array)[0];
 // ----------------------------------------------------
 function parse_forecast($day) {
   return array(
+    "period" => floatval($day["@attributes"]["period"]),
     "from" => $day["@attributes"]["from"],
     "to" => $day["@attributes"]["to"],
     "temperature" => array(
@@ -80,7 +81,7 @@ function parse_forecast($day) {
     "icon" => array(
       "description" => $day["symbol"]["@attributes"]["name"],
       "filename" => $day["symbol"]["@attributes"]["var"],
-      "url" => "https://" . $_SERVER["SERVER_NAME"] . "/icons/" . $day["symbol"]["@attributes"]["var"] . ".svg"
+      "url" => "https://" . $_SERVER["SERVER_NAME"] . "/assets/" . $day["symbol"]["@attributes"]["var"] . ".svg"
     )
   );
 }
