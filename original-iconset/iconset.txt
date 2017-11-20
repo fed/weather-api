@@ -1,5 +1,3 @@
 Iconset: Weather Color
 32 vector (SVG) icons by Yun Liu
 https://www.iconfinder.com/iconsets/weather-color-2
-
-OpenWeatherMap's iconlist accessible here: https://openweathermap.org/weather-conditions

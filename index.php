@@ -81,7 +81,7 @@ function parse_forecast($day) {
     "icon" => array(
       "description" => $day["symbol"]["@attributes"]["name"],
       "filename" => $day["symbol"]["@attributes"]["var"],
-      "url" => "https://" . $_SERVER["SERVER_NAME"] . "/assets/" . $day["symbol"]["@attributes"]["var"] . ".svg"
+      "url" => "https://weather-icons.argendev.com/" . $day["symbol"]["@attributes"]["var"] . ".svg"
     )
   );
 }
@@ -177,7 +177,8 @@ $data = array(
     ),
     "icon" => $parsed_forecast[0]["icon"]
   ),
-  "forecast" => $parsed_forecast
+  "forecast" => $parsed_forecast,
+  "source" => $yr_json_data["credit"]["link"]["@attributes"]
 );
 
 // ----------------------------------------------------

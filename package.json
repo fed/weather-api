@@ -1,0 +1,13 @@
+{
+  "name": "weather-api",
+  "version": "0.0.0",
+  "description": "Weather API",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fknussel/weather-api.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\""
+  }
+}

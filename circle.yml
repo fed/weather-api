@@ -1,0 +1,19 @@
+machine:
+  node:
+    version: 8.9.0
+  environment:
+    PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
+    # SURGE_LOGIN: X
+    # SURGE_TOKEN: X
+
+dependencies:
+  override:
+    - yarn install
+  cache_directories:
+    - ~/.cache/yarn
+
+deployment:
+  icons:
+    branch: master
+    commands:
+      - surge --project ./yr-icons --domain https://weather-api-icons.argendev.com
