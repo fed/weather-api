@@ -9,16 +9,6 @@ header("Access-Control-Allow-Methods: GET, POST");
 header("Access-Control-Allow-Headers: X-Requested-With");
 
 // ----------------------------------------------------
-// Hit the yr.no API
-// ----------------------------------------------------
-$yr_endpoint = "https://www.yr.no/place/Argentina/Córdoba/Freyre/forecast.xml";
-$yr_response = file_get_contents($yr_endpoint); // XML response
-
-// Parse XML to JSON.
-$yr_xml_data = simplexml_load_string($yr_response);
-$yr_json_data = json_decode(json_encode($yr_xml_data), TRUE);
-
-// ----------------------------------------------------
 // Hit the Local Weather Station API
 // ----------------------------------------------------
 $local_station_endpoint = "http://magya.omixom.com/xmlDatosEstaciones.php";
@@ -41,52 +31,28 @@ $local_station_data_array = array_filter($all_stations, function ($station) {
 $local_station_data = array_values($local_station_data_array)[0];
 
 // ----------------------------------------------------
-// Parse forecast from yr.no API response
+// Hit the Weather Channel API
 // ----------------------------------------------------
-function parse_forecast($day) {
+$wc_endpoint = "https://api.wunderground.com/api/bbc3eb6e6abf8b8e/geolookup/conditions/forecast/lang:SP/q/Argentina/Freyre.json";
+$wc_response = file_get_contents($wc_endpoint); // JSON response
+$wc_data = json_decode($wc_response, TRUE);
+
+// ----------------------------------------------------
+// Parse forecast from Weather Channel API response
+// ----------------------------------------------------
+function parse_forecast($entry) {
   return array(
-    "period" => floatval($day["@attributes"]["period"]),
-    "from" => $day["@attributes"]["from"],
-    "to" => $day["@attributes"]["to"],
-    "temperature" => array(
-      "label" => "Temperatura esperada",
-      "value" => floatval($day["temperature"]["@attributes"]["value"]),
-      "unit" => "°C"
-    ),
-    "pressure" => array(
-      "label" => "Presión atmosférica esperada",
-      "value" => floatval($day["pressure"]["@attributes"]["value"]),
-      "unit" => $day["pressure"]["@attributes"]["unit"]
-    ),
-    "precipitation" => array(
-      "label" => "Precipitación esperada",
-      "value" => floatval($day["precipitation"]["@attributes"]["value"]),
-      "unit" => "mm"
-    ),
-    "wind" => array(
-      "speed" => array(
-        "label" => "Velocidad esperada del viento",
-        "value" => floatval(number_format($day["windSpeed"]["@attributes"]["mps"] * 3.6, 2)),
-        "unit" => "km/h",
-        "description" => $day["windSpeed"]["@attributes"]["name"]
-      ),
-      "direction" => array(
-        "label" => "Dirección esperada del viento",
-        "value" => floatval($day["windDirection"]["@attributes"]["deg"]),
-        "unit" => "°",
-        "code" => $day["windDirection"]["@attributes"]["code"],
-        "description" => $day["windDirection"]["@attributes"]["name"]
-      )
-    ),
-    "icon" => array(
-      "description" => $day["symbol"]["@attributes"]["name"],
-      "filename" => $day["symbol"]["@attributes"]["var"],
-      "url" => "https://weather-icons.argendev.com/" . $day["symbol"]["@attributes"]["var"] . ".svg"
-    )
+    "period" => $entry["period"],
+    "altIconUrl" => $entry["icon_url"],
+    "iconUrl" => "https://weather-icons.argendev.com/" . $entry["icon"] . ".svg",
+    "icon" => $entry["icon"],
+    "title" => $entry["title"],
+    "description" => $entry["fcttext_metric"],
+    "chanceOfRain" => $entry["pop"] . "%"
   );
 }
 
-$parsed_forecast = array_map("parse_forecast", $yr_json_data["forecast"]["tabular"]["time"]);
+$parsed_forecast = array_map("parse_forecast", $wc_data["forecast"]["txt_forecast"]["forecastday"]);
 
 // ----------------------------------------------------
 // Parse response data
@@ -95,8 +61,7 @@ $data = array(
   "location" => array(
     "name" => "Freyre, Córdoba, Argentina",
     "latitude" => floatval($local_station_data["latitud"]),
-    "longitude" => floatval($local_station_data["longitud"]),
-    "altitude" => floatval($yr_json_data["location"]["location"]["@attributes"]["altitude"])
+    "longitude" => floatval($local_station_data["longitud"])
   ),
   "currentConditions" => array(
     "updatedAt" => $local_station_data["fechaMuestra"],
@@ -129,7 +94,7 @@ $data = array(
     ),
     "pressure" => array(
       "label" => "Presión atmosférica",
-      "value" => $parsed_forecast[0]["pressure"]["value"],
+      "value" => floatval($wc_data["current_observation"]["pressure_mb"]),
       "unit" => "hPa"
     ),
     "dewPoint" => array(
@@ -171,14 +136,14 @@ $data = array(
         "unit" => "mm"
       )
     ),
-    "sun" => array(
-      "rise" => $yr_json_data["sun"]["@attributes"]["rise"],
-      "set" => $yr_json_data["sun"]["@attributes"]["set"]
-    ),
-    "icon" => $parsed_forecast[0]["icon"]
+    "icon" => array(
+      "filename" => $wc_data["current_observation"]["icon"],
+      "url" => "https://weather-icons.argendev.com/" . $wc_data["current_observation"]["icon"] . ".svg",
+      "altUrl" => $wc_data["current_observation"]["icon_url"],
+      "description" => $wc_data["current_observation"]["weather"]
+    )
   ),
-  "forecast" => $parsed_forecast,
-  "source" => $yr_json_data["credit"]["link"]["@attributes"]
+  "forecast" => $parsed_forecast
 );
 
 // ----------------------------------------------------
