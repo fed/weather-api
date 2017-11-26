@@ -38,16 +38,24 @@ $wc_response = file_get_contents($wc_endpoint); // JSON response
 $wc_data = json_decode($wc_response, TRUE);
 
 // ----------------------------------------------------
+// Parse current conditions icon URL
+// ----------------------------------------------------
+$icon_url = str_replace("http://icons.wxug.com/i/c/k/", "https://weather-icons.argendev.com/", $wc_data["current_observation"]["icon_url"]);
+$icon_url = str_replace(".gif", ".svg", $icon_url);
+
+// ----------------------------------------------------
 // Parse forecast from Weather Channel API response
 // ----------------------------------------------------
 function parse_forecast($entry) {
+  $description = !empty($entry["fcttext_metric"]) ? $entry["fcttext_metric"] : $entry["fcttext"];
+
   return array(
     "period" => $entry["period"],
     "altIconUrl" => $entry["icon_url"],
     "iconUrl" => "https://weather-icons.argendev.com/" . $entry["icon"] . ".svg",
     "icon" => $entry["icon"],
     "title" => $entry["title"],
-    "description" => $entry["fcttext_metric"],
+    "description" => $description,
     "chanceOfRain" => $entry["pop"] . "%"
   );
 }
@@ -138,7 +146,7 @@ $data = array(
     ),
     "icon" => array(
       "filename" => $wc_data["current_observation"]["icon"],
-      "url" => "https://weather-icons.argendev.com/" . $wc_data["current_observation"]["icon"] . ".svg",
+      "url" => $icon_url,
       "altUrl" => $wc_data["current_observation"]["icon_url"],
       "description" => $wc_data["current_observation"]["weather"]
     )
